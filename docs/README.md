@@ -268,6 +268,8 @@
 250. 曲风-专辑
 251. 曲风-歌单
 252. 曲风-歌手
+253. 私信和通知接口
+254. 回忆坐标
 
 ## 安装
 
@@ -480,15 +482,17 @@ $ sudo docker run -d -p 3000:3000 netease-music-api
 
 !> 分页接口返回字段里有`more`,more 为 true 则为有下一页
 
+!> 如果不需要接口headers携带cookies信息,可以加上noCookie参数,如`?noCookie=true`
+
 ### 登录
 
 说明 : 登录有三个接口,建议使用`encodeURIComponent`对密码编码或者使用`POST`请求,避免某些特殊字符无法解析,如`#`(`#`在 url 中会被识别为 hash,而不是 query)
 
 不要频繁调登录接口,不然可能会被风控,登录状态还存在就不要重复调登录接口
 
-因网易增加了网易云盾验证,密码登录暂时不要使用,尽量使用短信验证码登录和二维码登录,否则调用某些接口会触发需要验证的错误
+~~因网易增加了网易云盾验证,密码登录暂时不要使用,尽量使用短信验证码登录和二维码登录,否则调用某些接口会触发需要验证的错误~~
 
-#### 1. 手机登录(现在要求验证,暂时绕不过,请使用二维码登录)
+#### 1. 手机登录
 
 **必选参数 :**  
 `phone`: 手机号码
@@ -506,7 +510,7 @@ $ sudo docker run -d -p 3000:3000 netease-music-api
 
 **调用例子 :** `/login/cellphone?phone=xxx&password=yyy` `/login/cellphone?phone=xxx&md5_password=yyy` `/login/cellphone?phone=xxx&captcha=1234`
 
-#### 2. 邮箱登录(现在要求验证,暂时绕不过,请使用二维码登录)
+#### 2. 邮箱登录
 
 **必选参数 :**
 
@@ -558,7 +562,7 @@ v3.30.0 后支持手动传入 cookie,登录接口返回内容新增 `cookie` 字
 
 ##### 3. 二维码检测扫码状态接口
 
-说明: 轮询此接口可获取二维码扫码状态,800 为二维码过期,801 为等待扫码,802 为待确认,803 为授权登录成功(803 状态码下会返回 cookies)
+说明: 轮询此接口可获取二维码扫码状态,800 为二维码过期,801 为等待扫码,802 为待确认,803 为授权登录成功(803 状态码下会返回 cookies),如扫码后返回502,则需加上noCookie参数,如`&noCookie=true`
 
 必选参数: `key`,由第一个接口生成
 
@@ -801,6 +805,14 @@ signature：用户签名
 **接口地址 :** `/avatar/upload`
 
 **调用例子 :** `/avatar/upload?imgSize=200`
+
+### 私信和通知接口
+
+说明 : 登录后调用此接口,可获取私信和通知数量信息
+
+**接口地址 :** `/pl/count`
+
+**调用例子 :** `/pl/count`
 
 ### 国家编码列表
 
@@ -1051,11 +1063,11 @@ tags: 歌单标签
 
 ### 分享文本、歌曲、歌单、mv、电台、电台节目到动态
 
-说明 : 登录后调用此接口 ,可以分享文本、歌曲、歌单、mv、电台、电台节目到动态
+说明 : 登录后调用此接口 ,可以分享文本、歌曲、歌单、mv、电台、电台节目,专辑到动态
 
 **必选参数 :** `id` : 资源 id （歌曲，歌单，mv，电台，电台节目对应 id）
 
-**可选参数 :** `type`: 资源类型，默认歌曲 song，可传 `song`,`playlist`,`mv`,`djradio`,`djprogram`
+**可选参数 :** `type`: 资源类型，默认歌曲 song，可传 `song`,`playlist`,`mv`,`djradio`,`djprogram`, `album`
 
 `msg`: 内容，140 字限制，支持 emoji，@用户名（`/user/follows`接口获取的用户名，用户名后和内容应该有空格），图片暂不支持
 
@@ -1396,13 +1408,13 @@ tags: 歌单标签
 
 **调用例子 :** `/playlist/track/all?id=24381616&limit=10&offset=1`
 
-> 注：关于`offset`，你可以这样理解，假设你当前的歌单有100首歌
+> 注：关于`offset`，你可以这样理解，假设你当前的歌单有200首歌
 > 
-> 你传入limit=10&offset=0等价于limit=10，你会得到第1-10首歌曲
-> 
-> 你传入limit=10&offset=1，你会得到第2-11首歌曲
-> 
-> 如果你设置limit=10&offset=2，你就会得到第3-12首歌曲
+> 你传入limit=50&offset=0等价于limit=50，你会得到第1-50首歌曲
+
+> 你传入limit=50&offset=50，你会得到第51-100首歌曲
+
+> 如果你设置limit=50&offset=100，你就会得到第101-150首歌曲
 
 
 ### 歌单详情动态
@@ -1448,7 +1460,9 @@ tags: 歌单标签
 说明 : 使用注意事项同上
 
 **必选参数 :** `id` : 音乐 id
- `level`: 播放音质等级, 分为 `standard` => `标准`,`higher` => `较高`, `exhigh`=>`极高`, `lossless`=>`无损`, `hires`=>`Hi-Res`
+ `level`: 播放音质等级, 分为 `standard` => `标准`,`higher` => `较高`, `exhigh`=>`极高`, 
+`lossless`=>`无损`, `hires`=>`Hi-Res`, `jyeffect` => `高清环绕声`, `sky` => `沉浸环绕声`,
+`jymaster` => `超清母带`
 
 **接口地址 :** `/song/url/v1`
 
@@ -1658,6 +1672,35 @@ tags: 歌单标签
 
 相关讨论可见: [Issue](https://github.com/Binaryify/NeteaseCloudMusicApi/issues/1667)
 
+**歌词格式解析 :**
+
+当逐字歌词适用时，`yrc`的`lyric`字段包括形式如下的内容
+* （可能存在）JSON 歌曲元数据
+```
+{"t":0,"c":[{"tx":"作曲: "},{"tx":"柳重言","li":"http://p1.music.126.net/Icj0IcaOjH2ZZpyAM-QGoQ==/6665239487822533.jpg","or":"orpheus://nm/artist/home?id=228547&type=artist"}]}
+{"t":5403,"c":[{"tx":"编曲: "},{"tx":"Alex San","li":"http://p1.music.126.net/pSbvYkrzZ1RFKqoh-fA9AQ==/109951166352922615.jpg","or":"orpheus://nm/artist/home?id=28984845&type=artist"}]}
+{"t":10806,"c":[{"tx":"制作人: "},{"tx":"王菲","li":"http://p1.music.126.net/1KQVD6XWbs5IAV0xOj1ZIA==/18764265441342019.jpg","or":"orpheus://nm/artist/home?id=9621&type=artist"},{"tx":"/"},{"tx":"梁荣骏","li":"http://p1.music.126.net/QrD8drwrRcegfKLPoiiG2Q==/109951166288436155.jpg","or":"orpheus://nm/artist/home?id=189294&type=artist"}]}
+```
+该字段不一定出现；可能出现的数据意义有：
+- `t` : 数据显示开始时间戳 (毫秒)
+- `c` : 元数据list
+- `tx`: 文字段
+- `li`: 艺术家、歌手头像图url
+- `or`：云音乐app内路径；例中作用即打开艺术家主页
+* 逐字歌词
+```
+[16210,3460](16210,670,0)还(16880,410,0)没...
+ ~~~~1 ~~~2  ~~~~3 ~~4 5 ~6 (...) 
+```
+由标号解释:
+1. 歌词行显示开始时间戳 (毫秒)
+2. 歌词行显示总时长(毫秒)
+3. 逐字显示开始时间戳 (毫秒)
+4. 逐字显示时长 (厘秒/0.01s)
+5. 未知
+6. 文字
+
+`yrc`的`version`字段貌似与`lyric`字段格式无关
 
 ### 新歌速递
 
@@ -2154,6 +2197,7 @@ tags: 歌单标签
 **调用例子 :** `/song/detail?ids=347230`,`/song/detail?ids=347230,347231`
 
 返回字段说明(感谢 [@tuxzz](https://github.com/Binaryify/NeteaseCloudMusicApi/issues/1121#issuecomment-774438040) 整理):
+
 ```
 name: String, 歌曲标题
 id: u64, 歌曲ID
@@ -2197,7 +2241,7 @@ sq: Option<Quality>, 无损质量文件信息
 h: Option<Quality>, 高质量文件信息
 m: Option<Quality>, 中质量文件信息
 l: Option<Quality>, 低质量文件信息
-a: Option<?>, 常为None, 功能未知
+a: Option<未知>, 常为None, 功能未知
 cd: Option<String>, None或如"04", "1/2", "3", "null"的字符串，表示歌曲属于专辑中第几张CD，对应音频文件的Tag
 no: u32, 表示歌曲属于CD中第几曲，0表示没有这个字段，对应音频文件的Tag
 rtUrl: Option<String(?)>, 常为None, 功能未知
@@ -2216,7 +2260,7 @@ originSongSimpleData: Option<SongSimpleData>, 对于翻唱曲，可选提供原�
 single: enum,
   0: 有专辑信息或者是DJ节目
   1: 未知专辑
-noCopyrightRcmd: Option<NoCopyrightRcmd>, None表示可以播，非空表示无版权
+noCopyrightRcmd: Option<NoCopyrightRcmd>, 不能判断出歌曲有无版权
 mv: u64, 非零表示有MV ID
 rtype: 常为0，功能未知
 rurl: Option<String(?)>, 常为None，功能未知
@@ -2666,7 +2710,13 @@ pc: 云盘歌曲信息，如果不存在该字段，则为非云盘歌曲
 
 **接口地址 :** `/program/recommend`
 
-**调用例子 :** `/program/recommend`
+**可选参数 :**  
+`limit`: 取出数量 , 默认为 10
+
+`offset`: 偏移数量 , 用于分页 , 如 :( 页数 -1)\*10, 其中 10 为 limit 的值 , 默认
+为 0
+
+**调用例子 :** `/program/recommend?limit=5`
 
 ### 独家放送(入口列表)
 
@@ -3799,9 +3849,24 @@ type='1009' 获取其 id, 如`/search?keywords= 代码时间 &type=1009`
 
 说明: 登录后调用此接口，可获取当前 VIP 信息。
 
+**可选参数 :** `uid` : 用户 id
+
 **接口地址 :** `/vip/info`
 
-**调用例子 :** `/vip/info`
+**调用例子 :** `/vip/info`, `/vip/info?uid=32953014`
+
+
+### 获取 VIP 信息(app端)
+
+说明: 登录后调用此接口，可获取当前 VIP 信息。
+
+**可选参数 :** `uid` : 用户 id
+
+**接口地址 :** `/vip/info/v2`
+
+**调用例子 :** `/vip/info/v2`, `/vip/info/v2?uid=32953014`
+
+
 
 ### 音乐人签到
 
@@ -4066,6 +4131,27 @@ type='1009' 获取其 id, 如`/search?keywords= 代码时间 &type=1009`
 
 **调用例子:** `/style/artist?tagId=1000`
 
+### 云村星评馆 - 简要评论
+
+说明: 调用此接口可以获取首页推荐的星评馆评论信息
+
+**接口地址:** `/starpick/comments/summary`
+
+### 私人 DJ
+
+说明: 调用此接口可以获取私人 DJ 的推荐内容 (包括 DJ 声音和推荐歌曲)
+
+**接口地址:** `/aidj/content/rcmd`
+
+**可选参数：** `longitude` `latitude` : 当前的经纬度
+
+### 回忆坐标
+
+说明: 可以获取当前歌曲的回忆坐标信息 (见手机 APP 百科页的回忆坐标功能)
+
+**接口地址:** `/music/first/listen/info`
+
+**必选参数：** `id` : 歌曲 ID
 
 ## 离线访问此文档
 
