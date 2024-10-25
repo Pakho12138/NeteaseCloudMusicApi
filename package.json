@@ -63,6 +63,7 @@
     "public"
   ],
   "dependencies": {
+    "@netlify/functions": "^2.8.2",
     "axios": "^1.2.2",
     "express": "^4.17.1",
     "express-fileupload": "^1.1.9",
@@ -71,6 +72,7 @@
     "pac-proxy-agent": "^7.0.0",
     "qrcode": "^1.4.4",
     "safe-decode-uri-component": "^1.2.1",
+    "serverless-http": "^3.2.0",
     "tunnel": "^0.0.6",
     "xml2js": "^0.6.2",
     "yargs": "^17.1.1"
