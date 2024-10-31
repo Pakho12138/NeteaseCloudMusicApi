@@ -1,8 +1,8 @@
 const serverless = require('serverless-http');
- const generateConfig = require('./generateConfig')
+ const generateConfig = require('../../generateConfig')
 async function start() {
   await generateConfig()
-  return require('./server').serveNcmApi({
+  return require('../../server').serveNcmApi({
     checkVersion: true,
   })
 }
