@@ -19,6 +19,7 @@
       "node_modules/axios",
       "node_modules/express",
       "node_modules/express-fileupload",
+      "node_modules/serverless-http",
       "node_modules/md5",
       "node_modules/music-metadata",
       "node_modules/pac-proxy-agent",
