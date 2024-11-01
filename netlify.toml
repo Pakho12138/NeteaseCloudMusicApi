@@ -1,6 +1,6 @@
 [functions]
  included_files = ["netlify/functions/module/**", "netlify/functions/util/**", "netlify/functions/plugins/**", "netlify/functions/package.json"]
- external_node_modules = ['express', 'axios', 'qrcode']
+ external_node_modules = ['express', 'axios', 'qrcode', 'music-metadata']
  node_bundler = 'esbuild'
 [[redirects]]
  force = true
