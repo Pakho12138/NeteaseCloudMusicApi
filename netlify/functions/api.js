@@ -10,10 +10,10 @@
 
 // module.exports.handler = serverless(app)
 
-const generateConfig = require('./generateConfig')
+const generateConfig = require('../../generateConfig')
 async function start() {
   await generateConfig()
-  require('./server').serveNcmApi({
+  require('../../server').serveNcmApi({
     checkVersion: true,
   })
 }
