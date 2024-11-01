@@ -8,4 +8,4 @@ async function start() {
 }
 const app = start()
 
-module.exports.handler = app
+module.exports.handler = serverless(app)
