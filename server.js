@@ -211,10 +211,6 @@ async function consturctServer(moduleDefs) {
     '--------------------------modulesPath-------------------',
     path.join(__dirname, 'module'),
   )
-  console.log(
-    '--------------------------moduleDefinitions-------------------',
-    moduleDefinitions,
-  )
   for (const moduleDef of moduleDefinitions) {
     // Register the route.
     app.use(moduleDef.route, async (req, res) => {
