@@ -8,4 +8,6 @@ async function start() {
   })
   return serverless(app)
 }
-module.exports.handler = start()
+module.exports.handler = async () => {
+  return await start()
+}
