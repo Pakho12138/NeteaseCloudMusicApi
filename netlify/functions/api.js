@@ -1,11 +1,11 @@
 const serverless = require('serverless-http')
 const generateConfig = require('../../generateConfig')
+
 async function start() {
   await generateConfig()
-  return require('../../server').serveNcmApi({
+  const app = await require('../../server').serveNcmApi({
     checkVersion: true,
   })
+  return serverless(app)
 }
-const app = start()
-
-module.exports.handler = serverless(app)
+module.exports.handler = start()
