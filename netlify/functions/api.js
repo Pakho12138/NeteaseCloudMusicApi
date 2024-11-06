@@ -7,5 +7,8 @@ exports.handler = async function (event, context) {
   })
   const server = serverless(app)
   const result = await server(event, context)
+  console.log('---------------------result-------------------', result)
+  console.log('---------------------event-------------------', event)
+  console.log('---------------------context-------------------', context)
   return result
 }
