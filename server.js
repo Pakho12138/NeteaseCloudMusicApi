@@ -151,7 +151,6 @@ async function consturctServer(moduleDefs) {
         'Content-Type': 'application/json; charset=utf-8',
       })
     }
-    userAgent = req.headers['user-agent']
     req.method === 'OPTIONS' ? res.status(204).end() : next()
   })
 
@@ -159,6 +158,7 @@ async function consturctServer(moduleDefs) {
    * Cookie Parser
    */
   app.use((req, _, next) => {
+    userAgent = req.headers['user-agent']
     req.cookies = {}
     //;(req.headers.cookie || '').split(/\s*;\s*/).forEach((pair) => { //  Polynomial regular expression //
     ;(req.headers.cookie || '').split(/;\s+|(?<!\s)\s+$/g).forEach((pair) => {
