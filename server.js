@@ -8,6 +8,7 @@ const cache = require('./util/apicache').middleware
 const { cookieToJson } = require('./util/main')
 const fileUpload = require('express-fileupload')
 const decode = require('safe-decode-uri-component')
+let userAgent = ''
 
 /**
  * The version check result.
@@ -150,6 +151,8 @@ async function consturctServer(moduleDefs) {
         'Content-Type': 'application/json; charset=utf-8',
       })
     }
+    userAgent = req.headers['user-agent']
+    console.log('--------------userAgent---------------', userAgent)
     req.method === 'OPTIONS' ? res.status(204).end() : next()
   })
 
@@ -309,11 +312,6 @@ async function serveNcmApi(options) {
   /** @type {import('express').Express & ExpressExtension} */
 
   const appExt = app
-
-  app.get('/', (req, res) => {
-    const userAgent = req.headers['user-agent']
-    console.log('--------------userAgent---------------', userAgent)
-  })
 
   appExt.server = app.listen(port, host, () => {
     console.log(`server running @ http://${host ? host : 'localhost'}:${port}`)
