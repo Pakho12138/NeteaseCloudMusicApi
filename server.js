@@ -308,7 +308,7 @@ async function serveNcmApi(options) {
 
   /** @type {import('express').Express & ExpressExtension} */
   const appExt = app
-  console.log('--------------------app--------------------', app)
+  console.log('--------------------__dirname--------------------', __dirname)
 
   if (__dirname.includes('vercel')) {
     appExt.server = app.listen(port, host, () => {
