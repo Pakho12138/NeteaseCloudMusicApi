@@ -221,16 +221,10 @@ async function consturctServer(moduleDefs) {
       )
 
       try {
-        console.log('--------------------------query-------------------', query)
         const moduleResponse = await moduleDef.module(query, (...params) => {
-          console.log(
-            '--------------------------params-------------------',
-            params,
-          )
           // 参数注入客户端IP
           const obj = [...params]
           let ip = req.ip
-          console.log('--------------------------req-------------------', req)
           if (ip && ip.substr(0, 7) == '::ffff:') {
             ip = ip.substr(7)
           }
@@ -261,10 +255,6 @@ async function consturctServer(moduleDefs) {
         }
         res.status(moduleResponse.status).send(moduleResponse.body)
       } catch (/** @type {*} */ moduleResponse) {
-        console.log(
-          '--------------------------moduleResponse-------------------',
-          moduleResponse,
-        )
         console.log('[ERR]', decode(req.originalUrl), {
           status: moduleResponse.status,
           body: moduleResponse.body,
@@ -318,9 +308,9 @@ async function serveNcmApi(options) {
 
   /** @type {import('express').Express & ExpressExtension} */
   const appExt = app
-  appExt.server = app.listen(port, host, () => {
-    console.log(`server running @ http://${host ? host : 'localhost'}:${port}`)
-  })
+  // appExt.server = app.listen(port, host, () => {
+  //   console.log(`server running @ http://${host ? host : 'localhost'}:${port}`)
+  // })
 
   return appExt
 }
