@@ -310,9 +310,9 @@ async function serveNcmApi(options) {
 
   const appExt = app
 
-  // appExt.server = app.listen(port, host, () => {
-  //   console.log(`server running @ http://${host ? host : 'localhost'}:${port}`)
-  // })
+  appExt.server = app.listen(port, host, () => {
+    console.log(`server running @ http://${host ? host : 'localhost'}:${port}`)
+  })
 
   return appExt
 }
