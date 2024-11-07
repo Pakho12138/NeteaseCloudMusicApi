@@ -1,5 +1,5 @@
 // 电台节目列表
-const { toBoolean } = require('../util')
+const { toBoolean } = require('../util/main')
 module.exports = (query, request) => {
   const data = {
     radioId: query.rid,

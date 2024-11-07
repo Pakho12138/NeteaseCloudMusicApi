@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const { cookieToJson } = require('./util')
+const { cookieToJson } = require('./util/main')
 const request = require('./util/request')
 
 /** @type {Record<string, any>} */

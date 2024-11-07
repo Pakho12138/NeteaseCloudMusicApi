@@ -5,7 +5,7 @@ const request = require('./util/request')
 const packageJSON = require('./package.json')
 const exec = require('child_process').exec
 const cache = require('./util/apicache').middleware
-const { cookieToJson } = require('./util/index')
+const { cookieToJson } = require('./util/main')
 const fileUpload = require('express-fileupload')
 const decode = require('safe-decode-uri-component')
 

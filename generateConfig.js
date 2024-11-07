@@ -1,6 +1,6 @@
 const fs = require('fs')
 const { register_anonimous } = require('./main')
-const { cookieToJson } = require('./util/index')
+const { cookieToJson } = require('./util/main')
 const config = require('./util/config.json')
 const path = require('path')
 async function generateConfig() {
