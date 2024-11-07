@@ -2,9 +2,8 @@
 const generateConfig = require('./generateConfig')
 async function start() {
   await generateConfig()
-  const app = await require('./server').serveNcmApi({
+  require('./server').serveNcmApi({
     checkVersion: true,
   })
-  console.log('---------------app-----------------', app)
 }
 start()

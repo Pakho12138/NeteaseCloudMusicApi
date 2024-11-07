@@ -310,6 +310,11 @@ async function serveNcmApi(options) {
 
   const appExt = app
 
+  app.get('/', (req, res) => {
+    const userAgent = req.headers['user-agent']
+    console.log('--------------userAgent---------------', userAgent)
+  })
+
   appExt.server = app.listen(port, host, () => {
     console.log(`server running @ http://${host ? host : 'localhost'}:${port}`)
   })
