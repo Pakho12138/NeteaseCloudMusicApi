@@ -152,7 +152,6 @@ async function consturctServer(moduleDefs) {
       })
     }
     userAgent = req.headers['user-agent']
-    console.log('--------------userAgent---------------', userAgent)
     req.method === 'OPTIONS' ? res.status(204).end() : next()
   })
 
@@ -312,6 +311,7 @@ async function serveNcmApi(options) {
   /** @type {import('express').Express & ExpressExtension} */
 
   const appExt = app
+  console.log('--------------userAgent---------------', userAgent)
 
   appExt.server = app.listen(port, host, () => {
     console.log(`server running @ http://${host ? host : 'localhost'}:${port}`)
