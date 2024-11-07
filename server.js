@@ -309,9 +309,14 @@ async function serveNcmApi(options) {
   /** @type {import('express').Express & ExpressExtension} */
   const appExt = app
   console.log('--------------------app--------------------', app)
-  // appExt.server = app.listen(port, host, () => {
-  //   console.log(`server running @ http://${host ? host : 'localhost'}:${port}`)
-  // })
+
+  if (__dirname.includes('vercel')) {
+    appExt.server = app.listen(port, host, () => {
+      console.log(
+        `server running @ http://${host ? host : 'localhost'}:${port}`,
+      )
+    })
+  }
 
   return appExt
 }
