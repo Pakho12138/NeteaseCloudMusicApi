@@ -203,14 +203,6 @@ async function consturctServer(moduleDefs) {
     moduleDefs ||
     (await getModulesDefinitions(path.join(__dirname, 'module'), special))
 
-  console.log(
-    '--------------------------moduleDefs-------------------',
-    moduleDefs,
-  )
-  console.log(
-    '--------------------------modulesPath-------------------',
-    path.join(__dirname, 'module'),
-  )
   for (const moduleDef of moduleDefinitions) {
     // Register the route.
     app.use(moduleDef.route, async (req, res) => {
@@ -229,12 +221,17 @@ async function consturctServer(moduleDefs) {
       )
 
       try {
+        console.log('--------------------------query-------------------', query)
         const moduleResponse = await moduleDef.module(query, (...params) => {
+          console.log(
+            '--------------------------params-------------------',
+            params,
+          )
           // 参数注入客户端IP
           const obj = [...params]
           let ip = req.ip
-
-          if (ip.substr(0, 7) == '::ffff:') {
+          console.log('--------------------------req-------------------', req)
+          if (ip && ip.substr(0, 7) == '::ffff:') {
             ip = ip.substr(7)
           }
           // console.log(ip)
@@ -264,6 +261,10 @@ async function consturctServer(moduleDefs) {
         }
         res.status(moduleResponse.status).send(moduleResponse.body)
       } catch (/** @type {*} */ moduleResponse) {
+        console.log(
+          '--------------------------moduleResponse-------------------',
+          moduleResponse,
+        )
         console.log('[ERR]', decode(req.originalUrl), {
           status: moduleResponse.status,
           body: moduleResponse.body,
