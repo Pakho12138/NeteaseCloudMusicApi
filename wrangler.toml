@@ -1,2 +1,10 @@
 compatibility_flags = [ "nodejs_compat" ]
-compatibility_date = "2024-09-23"
+compatibility_date = "2025-07-12"
+
+[nodejs_compat]
+enabled = true
+
+name = "cloudmusicapi"
+main = "functions/api.js"
+[assets]
+directory = "./public"
