@@ -1,9 +1,9 @@
+compatibility_flags = [ "nodejs_compat" ]
+compatibility_date = "2025-07-12"
+
 name = "cloudmusicapi"
 main = "api.js"
 pages_build_output_dir = "./public"
-
-compatibility_flags = [ "nodejs_compat" ]
-compatibility_date = "2025-07-12"
 
 [nodejs_compat]
 enabled = true
