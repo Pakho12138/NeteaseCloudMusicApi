@@ -6,6 +6,5 @@ node_modules
 .history
 examples/moddef.json
 bin
-
-# Local Netlify folder
-.netlify
+anonymous_token
+.vercel

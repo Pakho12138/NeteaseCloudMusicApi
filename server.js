@@ -5,7 +5,7 @@ const request = require('./util/request')
 const packageJSON = require('./package.json')
 const exec = require('child_process').exec
 const cache = require('./util/apicache').middleware
-const { cookieToJson } = require('./util/main')
+const { cookieToJson } = require('./util/index')
 const fileUpload = require('express-fileupload')
 const decode = require('safe-decode-uri-component')
 
@@ -116,11 +116,11 @@ async function checkVersion() {
             ? VERSION_CHECK_RESULT.NOT_LATEST
             : VERSION_CHECK_RESULT.LATEST,
         )
+      } else {
+        resolve({
+          status: VERSION_CHECK_RESULT.FAILED,
+        })
       }
-    })
-
-    resolve({
-      status: VERSION_CHECK_RESULT.FAILED,
     })
   })
 }
@@ -136,6 +136,10 @@ async function consturctServer(moduleDefs) {
   const { CORS_ALLOW_ORIGIN } = process.env
   app.set('trust proxy', true)
 
+  /**
+   * Serving static files
+   */
+  app.use(express.static(path.join(__dirname, 'public')))
   /**
    * CORS & Preflight request
    */
@@ -172,15 +176,10 @@ async function consturctServer(moduleDefs) {
   /**
    * Body Parser and File Upload
    */
-  app.use(express.json())
-  app.use(express.urlencoded({ extended: false }))
+  app.use(express.json({ limit: '50mb' }))
+  app.use(express.urlencoded({ extended: false, limit: '50mb' }))
 
   app.use(fileUpload())
-
-  /**
-   * Serving static files
-   */
-  app.use(express.static(path.join(__dirname, 'public')))
 
   /**
    * Cache
@@ -225,8 +224,12 @@ async function consturctServer(moduleDefs) {
           // 参数注入客户端IP
           const obj = [...params]
           let ip = req.ip
-          if (ip && ip.substr(0, 7) == '::ffff:') {
+
+          if (ip.substr(0, 7) == '::ffff:') {
             ip = ip.substr(7)
+          }
+          if (ip == '::1') {
+            ip = global.cnIp
           }
           // console.log(ip)
           obj[3] = {
@@ -307,9 +310,7 @@ async function serveNcmApi(options) {
   ])
 
   /** @type {import('express').Express & ExpressExtension} */
-
   const appExt = app
-
   appExt.server = app.listen(port, host, () => {
     console.log(`server running @ http://${host ? host : 'localhost'}:${port}`)
   })
